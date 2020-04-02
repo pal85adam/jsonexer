@@ -16,7 +16,7 @@ public class Main {
         members = new Members(readJSON("./example-member-list.json"));
         attendanceMainMenuHandler();
         //System.out.println(members.toJSONString());
-        
+
     }
 
     private static String printAttendanceMainMenu() {

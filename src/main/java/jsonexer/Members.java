@@ -2,6 +2,9 @@ package jsonexer;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -30,9 +33,25 @@ public class Members {
         JSONArray membersJSONArray = membersJSONObject.getJSONArray("members");
         members = new HashMap<>();
         for (int i = 0; i < membersJSONArray.length(); i++) {
-            String id = (String) membersJSONArray.getJSONObject(i).get("id");
-            String name = (String) membersJSONArray.getJSONObject(i).get("name");
+            JSONObject thisMemberJObject = membersJSONArray.getJSONObject(i);
+            String id = (String) thisMemberJObject.get("id");
+            String name = (String) thisMemberJObject.get("name");
             members.put(id,new Member(id,name));
+            if(!thisMemberJObject.isNull("attendance")){
+                JSONArray thisMemberAttendanceJArray = thisMemberJObject.getJSONArray("attendance");
+                for (int j=0; j < thisMemberAttendanceJArray.length(); j++){
+                    JSONObject thisDayAttendance = thisMemberAttendanceJArray.getJSONObject(j);
+                    try {
+                        addAttended(id,
+                                thisDayAttendance.getBoolean("attended"),
+                                new SimpleDateFormat("EEE MMM dd HH:mm:ss zzzz yyyy")
+                                        .parse((String) thisDayAttendance.get("dayDate")));
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
         }
     }
 
